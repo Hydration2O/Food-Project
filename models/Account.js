@@ -1,6 +1,6 @@
-const { model, Schema, default: mongoose } = require("mongoose");
+const { model, Schema } = require("mongoose");
 
-const AccountSchema = new mongoose.Schema({
+const AccountSchema = new Schema({
   username: String,
   password: String,
 });

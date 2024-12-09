@@ -1,6 +1,6 @@
-const { model, Schema, default: mongoose } = require("mongoose");
+const { model, Schema } = require("mongoose");
 
-const RecipeSchema = new mongoose.Schema({
+const RecipeSchema = new Schema({
   name: String,
   ingredientes: String,
   image: String,
