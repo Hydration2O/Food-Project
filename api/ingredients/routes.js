@@ -1,16 +1,16 @@
 const express = require("express");
 const {
-  createIngredient,
-  getAllIngredients,
+  creatNewIngredient,
+  listIngredients,
   updateIngredient,
   deleteIngredient,
 } = require("./controllers");
 
 const router = express.Router();
 
-router.post("/", createIngredient);
+router.post("/", creatNewIngredient);
 
-router.get("/", getAllIngredients);
+router.get("/", listIngredients);
 
 router.put("/:ingredientId", updateIngredient);
 
