@@ -9,6 +9,20 @@ exports.listIngredients = async (req, res) => {
   }
 };
 
+exports.getIngredientByName = async (req, res) => {
+  const { ingredientName } = req.params;
+  try {
+    const ingredient = await Ingredient.findOne({ name: ingredientName });
+    if (ingredient) {
+      res.status(200).json(ingredient);
+    } else {
+      res.status(404).json({ error: "Ingredient not found" });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 exports.creatNewIngredient = async (req, res) => {
   try {
     const newIngredient = await Ingredient.create(req.body);
@@ -19,9 +33,9 @@ exports.creatNewIngredient = async (req, res) => {
 };
 
 exports.updateIngredient = async (req, res) => {
-  const { ingredienttId } = req.params;
+  const { ingredientId } = req.params;
   try {
-    const foundIngredient = await Ingredient.findById(ingredienttId);
+    const foundIngredient = await Ingredient.findById(ingredientId);
     if (foundIngredient) {
       await foundIngredient.updateOne(req.body);
       res.status(204).end();
