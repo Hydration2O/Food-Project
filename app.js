@@ -1,14 +1,13 @@
 const express = require("express");
-// const accounts = require("./accounts");
 const connectDb = require("./database");
-// const accountRouter = require("./apis/accounts/router");
+const ingredientRouter = require("./api/ingredients/routes");
 
 const app = express();
 const port = 8080;
 
 app.use(express.json());
 connectDb();
-// app.use("/api/accounts", accountRouter);
+app.use("/api/ingredients", ingredientRouter);
 
 app.listen(port, () => {
   console.log(`Example app listening on port http://localhost:${port}`);

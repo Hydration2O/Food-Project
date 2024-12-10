@@ -34,9 +34,9 @@ exports.updateIngredient = async (req, res) => {
 };
 
 exports.deleteIngredient = async (req, res) => {
-  const { ingredienttId } = req.params;
+  const { ingredientId } = req.params;
   try {
-    const foundIngredient = await Ingredient.findById(ingredienttId);
+    const foundIngredient = await Ingredient.findById(ingredientId);
     if (foundIngredient) {
       await foundIngredient.deleteOne();
       res.status(204).end();
