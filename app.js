@@ -2,7 +2,6 @@ const express = require("express");
 const connectDb = require("./database");
 
 const ingredientRouter = require("./api/ingredients/routes");
-
 const categoryRouter = require("./api/categories/routes");
 
 const app = express();
@@ -13,7 +12,6 @@ connectDb();
 
 app.use("/api/ingredients", ingredientRouter);
 app.use("/api/Categories", categoryRouter);
-
 
 app.listen(port, () => {
   console.log(`Example app listening on port http://localhost:${port}`);
