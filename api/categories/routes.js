@@ -6,9 +6,12 @@ const {
   createNewCategoryController,
   updateCategoryController,
   deleteCategoryController,
+  listCategoryIdController,
 } = require("./controllers");
 
 router.get("/", listCategoryController);
+
+router.get("/:categoryId", listCategoryIdController);
 
 router.post("/", createNewCategoryController);
 
