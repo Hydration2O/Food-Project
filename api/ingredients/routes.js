@@ -4,7 +4,7 @@ const {
   listIngredients,
   updateIngredient,
   deleteIngredient,
-  getIngredientByName,
+  getIngredientById,
 } = require("./controllers");
 
 const router = express.Router();
@@ -13,7 +13,7 @@ router.post("/", creatNewIngredient);
 
 router.get("/", listIngredients);
 
-router.get("/:ingredientName", getIngredientByName);
+router.get("/:ingredientId", getIngredientById);
 
 router.put("/:ingredientId", updateIngredient);
 
