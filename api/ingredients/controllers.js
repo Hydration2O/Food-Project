@@ -9,10 +9,10 @@ exports.listIngredients = async (req, res) => {
   }
 };
 
-exports.getIngredientByName = async (req, res) => {
-  const { ingredientName } = req.params;
+exports.getIngredientById = async (req, res) => {
+  const { ingredientId } = req.params;
   try {
-    const ingredient = await Ingredient.findOne({ name: ingredientName });
+    const ingredient = await Ingredient.findById(ingredientId);
     if (ingredient) {
       res.status(200).json(ingredient);
     } else {
