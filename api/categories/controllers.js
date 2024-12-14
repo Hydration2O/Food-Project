@@ -52,7 +52,7 @@ exports.deleteCategoryController = async (req, res) => {
   try {
     const foundCategory = await Category.findById(categoryId);
     if (foundCategory) {
-      await foundCategory.remove(req.body);
+      await foundCategory.deleteOne(req.body);
       res.status(204).end();
     } else {
       res.status(404).json({ message: "Category deleted" });
