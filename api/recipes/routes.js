@@ -1,11 +1,12 @@
 const express = require("express");
-const routes = express.Router();
+const router = express.Router();
 
 const {
   listAllRecipesController,
   createRecipeController,
   deleteRecipe,
   editRecipe,
+  getRecipeByIdController,
 } = require("./controllers");
 
 router.get("/", listAllRecipesController);
@@ -18,4 +19,4 @@ router.delete("/:recipeId", deleteRecipe);
 
 router.put("/:recipeId", editRecipe);
 
-module.exports = routes;
+module.exports = router;
