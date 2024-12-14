@@ -11,7 +11,7 @@ const {
 
 router.get("/", listAllRecipesController);
 
-router.get("/recipeId", getRecipeByIdController);
+router.get("/:recipeId", getRecipeByIdController);
 
 router.post("/", createRecipeController);
 
