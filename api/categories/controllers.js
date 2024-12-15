@@ -2,14 +2,31 @@ const Category = require("../../models/Category");
 
 exports.listCategoryController = async (req, res) => {
   try {
-    const categories = await Category.find();
+    const categories = await Category.find(); //.populate("Recipe");
     res.json(categories);
   } catch (e) {
     res.status(500).json({ Message: e.Message });
   }
 };
 
+exports.listCategoryIdController = async (req, res) => {
+  const { categoryId } = req.params;
+  try {
+    const category = await Category.findById(categoryId);
+    if (category) {
+      res.status(200).json(category);
+    } else {
+      res.status(404).json({ message: "Category not found" });
+    }
+  } catch (e) {
+    res.status(500).json({ Message: e.Message });
+  }
+};
+
 exports.createNewCategoryController = async (req, res) => {
+  if (req.file) {
+    req.body.image = req.file.filename;
+  }
   try {
     const newCategory = await Category.create(req.body);
     res.status(201).json(newCategory);
@@ -38,7 +55,7 @@ exports.deleteCategoryController = async (req, res) => {
   try {
     const foundCategory = await Category.findById(categoryId);
     if (foundCategory) {
-      await foundCategory.remove(req.body);
+      await foundCategory.deleteOne(req.body);
       res.status(204).end();
     } else {
       res.status(404).json({ message: "Category deleted" });
