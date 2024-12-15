@@ -19,7 +19,6 @@ const {
   createRecipeController,
   deleteRecipe,
   editRecipe,
-  getRecipeByIdController,
 } = require("./controllers");
 
 router.get("/", listAllRecipesController);
