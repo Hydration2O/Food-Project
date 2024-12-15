@@ -14,6 +14,7 @@ const RecipeSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Category",
   },
+
   prep_time: String,
 });
 

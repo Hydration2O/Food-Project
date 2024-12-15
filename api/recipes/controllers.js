@@ -14,13 +14,10 @@ exports.getRecipeByIdController = async (req, res) => {
 };
 
 exports.createRecipeController = async (req, res) => {
-  const recipeInfo = req.body;
-  // const createNewRecipe = (recipeInfo)=>{
-  //     if(recipeInfo.name.find()){
-
-  //     }
-  // };
-  const newRecipe = await Recipe.create(recipeInfo);
+  if (req.file) {
+    req.body.image = req.file.filename;
+  }
+  const newRecipe = await Recipe.create(req.body);
   res.status(201).json(newRecipe);
 };
 

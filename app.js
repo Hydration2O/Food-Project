@@ -13,6 +13,7 @@ app.use(express.json());
 app.use("/media", express.static(path.join(__dirname, "media")));
 app.use("/api/ingredients", ingredientRouter);
 app.use("/api/categories", categoryRouter);
+app.use("/api/Recipes", recipeRouter);
 app.use("/api/recipes", recipeRouter);
 app.use("/media", express.static(path.join(__dirname, "media")));
 
