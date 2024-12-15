@@ -10,7 +10,7 @@ const RecipeSchema = new mongoose.Schema({
   ],
   image: String,
   instructions: String,
-  categories: {
+  category: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Category",
   },
