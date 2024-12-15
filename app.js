@@ -10,12 +10,13 @@ const app = express();
 const port = 8080;
 
 app.use(express.json());
-connectDb();
-
+app.use("/media", express.static(path.join(__dirname, "media")));
 app.use("/api/ingredients", ingredientRouter);
 app.use("/api/categories", categoryRouter);
 app.use("/api/recipes", recipeRouter);
 app.use("/media", express.static(path.join(__dirname, "media")));
+
+connectDb();
 
 app.listen(port, () => {
   console.log(`Example app listening on port http://localhost:${port}`);
