@@ -1,6 +1,19 @@
 const express = require("express");
 const router = express.Router();
 
+const multer = require("multer");
+
+const storage = multer.diskStorage({
+  destination: "./media",
+  filename: (req, file, cb) => {
+    cb(null, `${+new Date()}${file.originalname}`);
+  },
+});
+
+const upload = multer({
+  storage,
+});
+
 const {
   listCategoryController,
   createNewCategoryController,
@@ -13,7 +26,7 @@ router.get("/", listCategoryController);
 
 router.get("/:categoryId", listCategoryIdController);
 
-router.post("/", createNewCategoryController);
+router.post("/", upload.single("image"), createNewCategoryController);
 
 router.put("/:categoryId", updateCategoryController);
 

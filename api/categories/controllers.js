@@ -24,6 +24,9 @@ exports.listCategoryIdController = async (req, res) => {
 };
 
 exports.createNewCategoryController = async (req, res) => {
+  if (req.file) {
+    req.body.image = req.file.filename;
+  }
   try {
     const newCategory = await Category.create(req.body);
     res.status(201).json(newCategory);
