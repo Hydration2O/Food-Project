@@ -27,7 +27,7 @@ exports.createRecipeController = async (req, res) => {
     console.log(req.body.ingredients);
     const newRecipe = await Recipe.create(req.body);
     await Category.findByIdAndUpdate(req.body.category, {
-      $push: { category: newRecipe._id },
+      $push: { recipes: newRecipe._id },
     });
     res.status(201).json(newRecipe);
   } catch (err) {
