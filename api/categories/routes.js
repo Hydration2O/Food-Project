@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-
+const passport = require("passport");
 const multer = require("multer");
 
 const storage = multer.diskStorage({
@@ -26,10 +26,24 @@ router.get("/", listCategoryController);
 
 router.get("/:categoryId", listCategoryIdController);
 
-router.post("/", upload.single("image"), createNewCategoryController);
+router.post(
+  "/",
+  passport.authenticate("jwt", { session: false }),
+  upload.single("image"),
+  createNewCategoryController
+);
 
-router.put("/:categoryId", updateCategoryController);
+router.put(
+  "/:categoryId",
+  passport.authenticate("jwt", { session: false }),
+  updateCategoryController
+);
 
-router.delete("/:categoryId", deleteCategoryController);
+router.delete(
+  "/:categoryId",
+  passport.authenticate("jwt", { session: false }),
+  deleteCategoryController
+);
 
 module.exports = router;
+//todo make controllers use the passport
