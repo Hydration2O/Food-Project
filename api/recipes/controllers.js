@@ -1,3 +1,4 @@
+const Category = require("../../models/Category");
 const Recipe = require("../../models/Recipe");
 
 exports.listAllRecipesController = async (req, res) => {
@@ -14,11 +15,25 @@ exports.getRecipeByIdController = async (req, res) => {
 };
 
 exports.createRecipeController = async (req, res) => {
-  if (req.file) {
-    req.body.image = req.file.filename;
+  try {
+    if (req.file) {
+      req.body.image = req.file.filename;
+    }
+    if (req.body.ingredients) {
+      req.body.ingredients = req.body.ingredients.split(",");
+    } else {
+      req.body.ingredients = [];
+    }
+    console.log(req.body.ingredients);
+    const newRecipe = await Recipe.create(req.body);
+    await Category.findByIdAndUpdate(req.body.category, {
+      $push: { recipes: newRecipe._id },
+    });
+    res.status(201).json(newRecipe);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ massage: "kaput" });
   }
-  const newRecipe = await Recipe.create(req.body);
-  res.status(201).json(newRecipe);
 };
 
 exports.editRecipe = async (req, res) => {
@@ -29,6 +44,24 @@ exports.editRecipe = async (req, res) => {
     await foundRecipe.updateOne(newData);
     res.status(201).json(foundRecipe);
   } else res.status(404).json();
+};
+
+exports.addIngredientToRecipe = async (req, res) => {
+  const { recipeId, ingredientId } = req.params;
+  const recipe = await Recipe.findById(recipeId);
+  const updatedRecipe = await recipe.updateOne({
+    $push: { ingredients: ingredientId },
+  });
+  res.status(200).json(updatedRecipe);
+};
+
+exports.addCategoryToRecipe = async (req, res) => {
+  const { recipeId, categoryId } = req.params;
+  const recipe = await Recipe.findById(recipeId);
+  const updatedRecipe = await recipe.updateOne({
+    $push: { categories: categoryId },
+  });
+  res.status(200).json(updatedRecipe);
 };
 
 exports.deleteRecipe = async (req, res) => {
