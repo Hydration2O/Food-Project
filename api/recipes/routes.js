@@ -19,6 +19,8 @@ const {
   createRecipeController,
   deleteRecipe,
   editRecipe,
+  addIngredientToRecipe,
+  addCategoryToRecipe,
 } = require("./controllers");
 
 router.get("/", listAllRecipesController);
@@ -30,5 +32,9 @@ router.post("/", upload.single("image"), createRecipeController);
 router.delete("/:recipeId", deleteRecipe);
 
 router.put("/:recipeId", editRecipe);
+
+router.put("/:recipeId/add/:ingredientId", addIngredientToRecipe);
+
+router.put("/:recipeId/add/:categoryId", addCategoryToRecipe);
 
 module.exports = router;
