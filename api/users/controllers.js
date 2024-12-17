@@ -4,10 +4,10 @@ const jwt = require("jsonwebtoken");
 const { JWT_SECRET, JWT_EXPIRATION_MS } = require("../../key");
 
 exports.registerUser = async (req, res) => {
-  const saltRounds = 10;
-  req.body.password = await bcrypt.hash(req.body.password, saltRounds);
-
+  console.log(req.body);
   try {
+    const saltRounds = 10;
+    req.body.password = await bcrypt.hash(req.body.password, saltRounds);
     const user = User(req.body);
     await user.save();
     const payload = {
