@@ -43,3 +43,16 @@ exports.loginUser = async (req, res) => {
   const token = jwt.sign(JSON.stringify(payload), JWT_SECRET);
   res.json({ token });
 };
+
+exports.getPermission = async (req, res) => {
+  try {
+    const { user } = req;
+    if (!user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    res.status(200).json({ role: user.role });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};

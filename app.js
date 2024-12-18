@@ -1,7 +1,7 @@
 const express = require("express");
 const connectDb = require("./database");
 const passport = require("passport");
-
+const cors = require("cors");
 const { localStrategy, jwtStrategy } = require("./passport");
 const ingredientRouter = require("./api/ingredients/routes");
 const categoryRouter = require("./api/categories/routes");
@@ -11,6 +11,16 @@ const userRouter = require("./api/users/routes");
 
 const app = express();
 const port = 8080;
+
+//npm i cors//
+
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
 
 app.use(express.json());
 app.use(passport.initialize());

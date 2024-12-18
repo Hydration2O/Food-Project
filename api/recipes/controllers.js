@@ -1,29 +1,30 @@
 const Category = require("../../models/Category");
 const Recipe = require("../../models/Recipe");
 
+const OwnershipCheck = (user, recipe) => {
+  return recipe.creator.equals(user.id);
+};
+
 exports.listAllRecipesController = async (req, res) => {
-  const recipe = await Recipe.find();
-  res.status(200).json(recipe);
+  try {
+    const recipes = await Recipe.find();
+    res.status(200).json(recipes);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };
 
 exports.getRecipeByIdController = async (req, res) => {
-  const { recipeId } = req.params;
-  const foundRecipe = await Recipe.findById(recipeId);
-  if (foundRecipe) {
-    res.status(201).json(foundRecipe);
-  } else res.status(404).json();
-};
-const OwnershipCheck = (user, recipe) => {
-  console.log("the user id is ");
-  console.log(user.id);
-  console.log("the recipe creator is ");
-  console.log(recipe.creator);
-  console.log(recipe.creator.equals(user.id));
-  // const = user.id
-  if (recipe.creator.equals(user.id)) {
-    return true;
-  } else {
-    return false;
+  try {
+    const { recipeId } = req.params;
+    const foundRecipe = await Recipe.findById(recipeId);
+    if (foundRecipe) {
+      res.status(200).json(foundRecipe);
+    } else {
+      res.status(404).json("Recipe not found");
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -39,87 +40,117 @@ exports.createRecipeController = async (req, res) => {
     } else {
       req.body.ingredients = [];
     }
-    console.log(req.body.ingredients);
+
     const newRecipe = await Recipe.create(req.body);
+
     await Category.findByIdAndUpdate(req.body.category, {
       $push: { recipes: newRecipe._id },
     });
 
     res.status(201).json(newRecipe);
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ massage: "kaput" });
+    res.status(500).json({ message: err.message });
   }
 };
 
 exports.editRecipe = async (req, res) => {
   const { recipeId } = req.params;
   const newData = req.body;
-  const foundRecipe = await Recipe.findById(recipeId);
-  if (req.body.ingredients) {
-    req.body.ingredients = req.body.ingredients.split(",");
-  } else {
-    req.body.ingredients = [];
-  }
-  if (foundRecipe) {
-    const isOwned = OwnershipCheck(req.user, foundRecipe);
-    console.log(isOwned);
-    if (isOwned) {
-      await foundRecipe.updateOne(newData);
-      res.status(201).json(foundRecipe);
-    } else {
-      res.status(403).json("this user doesn't own this recipe");
+
+  try {
+    const foundRecipe = await Recipe.findById(recipeId);
+
+    if (!foundRecipe) {
+      return res.status(404).json("Recipe not found");
     }
-  } else res.status(404).json("recipe not found");
+
+    const isOwned = foundRecipe.creator.equals(req.creator);
+    const isAdmin = req.user.role === "admin";
+
+    if (isOwned || isAdmin) {
+      const updatedRecipe = await Recipe.findByIdAndUpdate(recipeId, newData, {
+        new: true,
+        runValidators: true,
+      });
+      return res.status(200).json({
+        message: "Recipe updated successfully",
+        recipe: updatedRecipe,
+      });
+    }
+
+    return res.status(403).json("You are not authorized to edit this recipe");
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };
 
 exports.addIngredientToRecipe = async (req, res) => {
   const { recipeId, ingredientId } = req.params;
-  const foundRecipe = await Recipe.findById(recipeId);
-  //TODO check if ing is there
-  if (foundRecipe) {
+
+  try {
+    const foundRecipe = await Recipe.findById(recipeId);
+
+    if (!foundRecipe) {
+      return res.status(404).json("Recipe not found");
+    }
+
     const isOwned = OwnershipCheck(req.user, foundRecipe);
     if (isOwned) {
-      const updatedRecipe = await foundRecipe.updateOne({
-        $push: { ingredients: ingredientId },
-      });
-      res.status(200).json(updatedRecipe);
+      foundRecipe.ingredients.push(ingredientId);
+      await foundRecipe.save();
+      res
+        .status(200)
+        .json({ message: "Ingredient added", recipe: foundRecipe });
     } else {
-      res.status(403).json("this user doesn't own this recipe");
+      res.status(403).json("You are not authorized to modify this recipe");
     }
-  } else {
-    res.status(404).josn("recipe not found");
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 };
 
 exports.addCategoryToRecipe = async (req, res) => {
   const { recipeId, categoryId } = req.params;
-  const foundRecipe = await Recipe.findById(recipeId);
-  if (foundRecipe) {
+
+  try {
+    const foundRecipe = await Recipe.findById(recipeId);
+
+    if (!foundRecipe) {
+      return res.status(404).json("Recipe not found");
+    }
+
     const isOwned = OwnershipCheck(req.user, foundRecipe);
     if (isOwned) {
-      const updatedRecipe = await foundRecipe.updateOne({
-        $push: { categories: categoryId },
-      });
-      res.status(200).json(updatedRecipe);
+      foundRecipe.category.push(categoryId);
+      await foundRecipe.save();
+      res.status(200).json({ message: "Category added", recipe: foundRecipe });
     } else {
-      res.status(403).json("this user doesn't own this recipe");
+      res.status(403).json("You are not authorized to modify this recipe");
     }
-  } else {
-    res.status(404).josn("recipe not found");
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 };
 
 exports.deleteRecipe = async (req, res) => {
   const { recipeId } = req.params;
-  const targetRecipe = await Recipe.findById(recipeId);
-  if (targetRecipe) {
-    const isOwned = OwnershipCheck(req.user, foundRecipe);
-    if (isOwned) {
-      await targetRecipe.deleteOne();
-      res.status(204).json(targetRecipe);
-    } else {
-      res.status(403).json("this user doesn't own this recipe");
+
+  try {
+    const targetRecipe = await Recipe.findById(recipeId);
+
+    if (!targetRecipe) {
+      return res.status(404).json("Recipe not found");
     }
-  } else res.status(404).json("recipe not found");
+
+    const isAdmin = req.user.role === "admin";
+
+    if (isAdmin) {
+      await targetRecipe.deleteOne();
+      return res.status(204).end();
+    }
+
+    return res.status(403).json("Only admins can delete recipes");
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };
