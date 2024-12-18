@@ -1,4 +1,5 @@
 const express = require("express");
+const passport = require("passport");
 const {
   creatNewIngredient,
   listIngredients,
@@ -9,14 +10,27 @@ const {
 
 const router = express.Router();
 
-router.post("/", creatNewIngredient);
+router.post(
+  "/",
+  passport.authenticate("jwt", { session: false }),
+  creatNewIngredient
+);
 
 router.get("/", listIngredients);
 
 router.get("/:ingredientId", getIngredientById);
 
-router.put("/:ingredientId", updateIngredient);
+router.put(
+  "/:ingredientId",
+  passport.authenticate("jwt", { session: false }),
+  updateIngredient
+);
 
-router.delete("/:ingredientId", deleteIngredient);
+router.delete(
+  "/:ingredientId",
+  passport.authenticate("jwt", { session: false }),
+  deleteIngredient
+);
 
 module.exports = router;
+//todo make controllers use the passport
