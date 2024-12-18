@@ -1,5 +1,18 @@
 const Ingredient = require("../../models/Ingredient");
 
+const OwnershipCheck = (user, recipe) => {
+  console.log("the user id is ");
+  console.log(user.id);
+  console.log("the recipe creator is ");
+  console.log(recipe.creator);
+  console.log(recipe.creator.equals(user.id));
+  if (recipe.creator.equals(user.id)) {
+    return true;
+  } else {
+    return false;
+  }
+};
+
 exports.listIngredients = async (req, res) => {
   try {
     const ingredients = await Ingredient.find();
